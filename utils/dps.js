@@ -12,8 +12,9 @@ const range = (char) => {
     const basePrimaryStat = char.baseStats[attributes.primaryStat]
     const equipPrimary = getEquipPrimaryStats(char, attributes.primaryStat)
     const primaryStatSum = basePrimaryStat + Math.floor(basePrimaryStat * 0.1) + equipPrimary
+    console.log(`luk: ${primaryStatSum}`)
     // breaks if all stats arent present at least as 0s
-    const secondaryStatSum = attributes.secondary.map(stat => char.baseStats[stat] + char.weapon.stats[stat]).reduce((acc, cur) => acc + cur, 0);
+    const secondaryStatSum = getEquipSecondaryStats(char, attributes.secondary)//attributes.secondary.map(stat => char.baseStats[stat] + char.weapon.stats[stat]).reduce((acc, cur) => acc + cur, 0);
     const primary = primaryStatSum * attributes.primaryMulti;
     const secondary = secondaryStatSum
     const totalWatt = getTotalWatt(char)//char.weapon.att
@@ -21,6 +22,22 @@ const range = (char) => {
     const maxRange = (primary + secondary) * (totalWatt) / 100
     const minRange = (primary * 0.9 * attributes.mastery + secondary) * totalWatt / 100
     return { minRange, maxRange }
+}
+
+const getEquipSecondaryStats = (char, secondaryStats) => {
+    return secondaryStats.map(stat => {
+        let total = char.baseStats[stat]
+        total += Math.floor(total * 0.1)// mw calc
+        Object.keys(char.equip).forEach(slot => {
+            const eq = char.equip[slot]
+            if (!isNaN(Number(eq.stats[stat]))) {
+                total += eq.stats[stat];
+            }
+        })
+        
+        console.log(`${stat}: ${total}`)
+        return total;
+    }).reduce((acc, cur) => acc + cur, 0);
 }
 
 /*
@@ -87,16 +104,49 @@ const tomp = {
         helmet: {
             name: "auf",
             stats: {
-                str: 87,
+                str: 84,
                 dex: 87,
                 int: 84,
                 luk: 86
             }
         },
+        medal: {
+            name: "leg thief",
+            stats: {
+                str: 0,
+                dex: 0,
+                luk: 0,
+            },
+            att: 3
+        },
+        ear: {
+            name: "ifia",
+            stats: {
+                str: 0,
+                dex: 0,
+                luk: 17,
+            }
+        },
+        face: {
+            name: "nose",
+            stats: {
+                str: 1,
+                dex: 0,
+                luk: 7,
+            }
+        },
+        eye: {
+            name: "toad",
+            stats: {
+                str: 3,
+                dex: 0,
+                luk: 7,
+            }
+        },
         overall: {
             name: "katinas",
             stats: {
-                dex: 5,
+                dex: 6,
                 luk: 40,
             }
         },
@@ -137,7 +187,7 @@ const tomp = {
                 str: 0,
                 dex: 0,
                 int: 0,
-                luk: 0
+                luk: 0,
             }
         },
         ring1: {
