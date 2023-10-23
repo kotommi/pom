@@ -50,6 +50,7 @@ Faster (3): 660ms (-150ms)
 Fast (4): 720ms (-90ms)
 Fast (5): 750ms (-60ms)
 Normal (6): 810ms
+Shadow partner is 50% of the hit floored. tested in game
 */
 const ttDamage = (char) => {
     const attributes = weaponAttributes[char.weapon.type]
@@ -66,7 +67,8 @@ const ttDamage = (char) => {
     const averageDamage = baseDamage * (1 - critChance) + critDamage * critChance
     const maxHit = maxTT * skillPercentage * critMulti
     const skillTime = 0.6
-    const averageDps = 3 * averageDamage / skillTime
+    // 3 hits + 3*0.5 hits from sp
+    const averageDps = (3 + 3 * 0.5) * averageDamage / skillTime
     return { averageDps, averageDamage, maxHit }
     //TODO shadow partner, just 50% of the hit?
 }
